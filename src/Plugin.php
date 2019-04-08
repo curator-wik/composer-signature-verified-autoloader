@@ -5,12 +5,11 @@ namespace Curator\ComposerSAPlugin;
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
-use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Util\Filesystem;
 
-class Plugin implements PluginInterface, EventSubscriberInterface, Capable {
+class Plugin implements PluginInterface, EventSubscriberInterface {
 
   /** @var Composer $composer */
   protected $composer;
@@ -25,12 +24,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface, Capable {
   public static function getSubscribedEvents() {
     return array(
       'post-autoload-dump' => 'injectValidatingAutoloader'
-    );
-  }
-
-  public function getCapabilities() {
-    return array(
-      'Composer\Plugin\Capability\CommandProvider' => 'Curator\ComposerSAPlugin\CommandProvider',
     );
   }
 

@@ -1,6 +1,6 @@
 {
-    "name": "curator-wik/composer-signed-autoloading",
-    "description": "Composer plugin that makes the dumped autoloader verify non-opcached source files",
+    "name": "curator-wik/signature-verified-autoloader",
+    "description": "Composer plugin that makes the autoloader verify source files as they enter the opcache",
     "type": "composer-plugin",
     "require": {
         "composer-plugin-api": "^1.0|^2.0",
