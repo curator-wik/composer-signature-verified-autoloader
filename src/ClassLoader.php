@@ -39,8 +39,6 @@ class ClassLoader extends LoaderBase {
    * @return bool
    */
   public function validateAndCache($file, $retrying = false) {
-    global $baseDir;
-
     $hash_file = dirname($file) . DIRECTORY_SEPARATOR . 'hashes.sha256';
     if (! is_file($hash_file) || ($hashes = file_get_contents($hash_file)) === false) {
       return false;
@@ -53,11 +51,13 @@ class ClassLoader extends LoaderBase {
       return false;
     }
 
-    // $baseDir set by all autoload_*.php optimized autoload files.
-    // It should always be set here, but if not, prevent reading /pubkey.
+    // pull $baseDir into context
+    include __DIR__ . DIRECTORY_SEPARATOR . 'autoload_classmap.php';
+    // If somehow $baseDir not set now, prevent reading /pubkey.
     if (empty($baseDir)) {
       return false;
     }
+
     $pubkey_file = $baseDir . DIRECTORY_SEPARATOR . 'pubkey.poc';
     if (! is_file($pubkey_file) || ($pubkey = file_get_contents($pubkey_file)) === false) {
       return false;

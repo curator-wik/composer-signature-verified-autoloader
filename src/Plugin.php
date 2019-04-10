@@ -34,17 +34,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $vendorPath = $filesystem->normalizePath(realpath(realpath($config->get('vendor-dir'))));
 
     $class_loader_file = $vendorPath . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'ClassLoader.php';
-    $class_loader_fh = fopen($class_loader_file, 'r+');
-    $class_loader_base_code = fread($class_loader_fh, 4 * 1024);
-    fseek($class_loader_fh, 0);
-    $class_loader_base_code = str_replace("\nclass ClassLoader\n", "\nclass LoaderBase \n", $class_loader_base_code);
-    fwrite($class_loader_fh, $class_loader_base_code);
+    $class_loader_base_code = file_get_contents($class_loader_file);
+    $original_snippets = ["\nclass ClassLoader\n", '    private $'];
+    $replaced_snippets = ["\nclass LoaderBase \n", '    protected $'];
+    $class_loader_base_code = str_replace($original_snippets, $replaced_snippets, $class_loader_base_code);
+    file_put_contents($class_loader_file, $class_loader_base_code);
 
     $new_loader_code = file_get_contents(dirname(__FILE__) . '/ClassLoader.php');
     $new_loader_code = substr($new_loader_code, strpos($new_loader_code, "\nclass ClassLoader extends LoaderBase"));
-
-    fseek($class_loader_fh, 0, SEEK_END);
-    fwrite($class_loader_fh, $new_loader_code);
-    fclose($class_loader_fh);
+    file_put_contents($class_loader_file, $new_loader_code, FILE_APPEND);
   }
 }
